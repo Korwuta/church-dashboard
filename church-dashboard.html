@@ -1,0 +1,961 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <style>
+         :root{
+                --background-color-body: white;
+                --text-color:black;
+                --account-background-color:#F8F9FB;
+                --account-border-color:#D4DAF5;
+                --toggle-background-color:white;
+                --toggle-border:whitesmoke;
+                --upcoming-event-background-color:#E4E7EC;
+                --faint-text:gray;
+                --subtle-shadow:gainsboro;
+                --announcement-image-color:#3C3F41;
+                --svg-color:#3C3F41;
+                --table-row-1: #E4E7EC;
+                --table-row-odd:#F8F9FB;
+                --table-row-even:#FAFAFA;
+                --select-color:#F2F3F4;
+            }
+
+
+        [backgroundmode="dark"]{
+            --background-color-body: #181818;
+            --text-color:white;
+            --account-background-color:#1F1F1F;
+            --account-border-color:grey;
+            --toggle-background-color:#3B3B3B;
+            --toggle-border: #2B2D30;
+            --upcoming-event-background-color:#181818;
+            --faint-text:gainsboro;
+            --subtle-shadow:#313030;
+            --announcement-image-color:#F1F4FD;
+            --svg-color:white;
+            --table-row-1:#454545;
+            --table-row-odd:#1F1F1F;
+            --table-row-even:#1F1F1F;
+            --select-color:#454545;
+        }
+        ul{
+            list-style: none;
+            padding-left: 30px;
+        }
+        .dashboard-list{
+            padding-left: 0;
+        }
+        .side-panel svg,.nav3 svg{
+            width: 20px;
+            height: 20px;
+            transition: all 0.3s ease;
+        }
+        body{
+            display: flex;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            font-family: 'Nunito',sans-serif;
+            background-color: var(--background-color-body);
+        }
+        header{
+            width: fit-content;
+            font-size: 1.1rem;
+            height: 100vh;
+            position: sticky;
+            display: flex;
+            flex-direction: column;
+            top: 0;
+        }
+        header p{
+            font-size: 1.7rem;
+            padding-left: 10px;
+        }
+        .side-panel{
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            place-content: space-between;
+            padding: 20px 25px;
+            background-color: var(--account-background-color);
+            margin: 4px 0;
+            flex: 1;
+            color: var(--svg-color);
+            border-top-right-radius: 30px;
+            border-bottom-right-radius: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid var(--subtle-shadow);
+            position: sticky;
+            top: 0;
+            left: 0;
+            bottom: 0;
+        }
+        .side-panel li,.nav3 li{
+            /* width: 100%; */
+            display: grid;
+            place-content: left;
+            margin: 7px 0;
+        }
+        .side-panel li>div, .nav3 li>div{
+            display: flex;
+            gap: 8px;
+            place-items: center;
+            padding: 10px 10px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .side-panel li>div:hover{
+            background-color: #3C3F41;
+        }
+        .side-panel li>ul{
+            font-size: 1.1rem;
+        }
+        .nav3 ul{
+            font-size: 1.5rem;
+        }
+        [title="selected"]{
+            background-color: var(--account-border-color);
+        }
+        [type="expandable"]{
+            justify-content: space-between;
+        }
+        [type="expanded-list"]>li{
+            justify-content: space-between;
+            animation: appear 0.2s ease;
+            animation-duration: calc(var(--index)*0.1s);
+            display: none;
+            transform-origin: left center;
+            color: gainsboro;
+            padding: 8px 0;
+            padding: 10px 15px;
+            margin: 3px 0;
+            margin-right: 25px;
+            border-radius: 20px;
+            font-size: 1rem;
+        }
+        [type="expanded-list"]>li:hover{
+            background-color: #3C3F41;
+        }
+        .expand li{
+            display: block;
+        }
+        .rotate-arrow{
+            rotate: 180deg;
+        }
+
+        .show-panel{
+            width: unset;
+            padding: 20px 15px;
+        }
+        .show-panel span{
+            display: none;
+        }
+        .panel-toggle{
+            transition: all 0s ease 0.3s;
+            padding: 10px;
+            background-color: var(--toggle-background-color);
+            border: 1px solid var(--subtle-shadow);
+            border-radius: 50%;
+        }
+        .show-panel [type="expandable"]{
+            justify-content: unset;
+            gap: 0;
+            display: grid !important;
+        }
+        .show-panel .panel-toggle{
+            rotate: -180deg;
+        }
+        .show-panel [type="expanded-list"]{
+                display: none;
+            }
+        .show-panel .top-text{
+            justify-content: center;
+        }
+        .show-panel .bottom{
+            place-content: center;
+        }
+        .top-text{
+            display: flex; 
+            justify-content: space-between; 
+            place-items: center; 
+            margin: 30px 0 30px 0; 
+            font-size: 1.6rem; 
+            font-weight: bold;
+        }
+        .nav3{
+            display: none;
+        }
+        div[title="selected"]{
+            background-color: var(--upcoming-event-background-color);
+            box-shadow: 0 0 3px 0 var(--background-color-body);
+            border: 1px solid var(--subtle-shadow);
+        }
+        .nav3{
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            color: white;
+            z-index: 1000;
+        }
+        .list{
+            position: absolute;
+            top: 100%;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: calc(100vh - 100%);
+            background-color: rgba(56, 56, 56, 0.7);
+            backdrop-filter: blur(15px);
+            
+        }
+        .top-bar{
+            display: flex;
+            place-items: center;
+            place-content: space-between;
+            padding: 20px 20px;
+            padding-right: 50px;
+            background-color: var(--background-color-body);
+            border-bottom: 1px solid var(--subtle-shadow);
+            position: relative;
+        }
+        main{
+            flex: 1;
+        }
+        .list{
+            display:none
+        }
+        .menu{
+            visibility: hidden;
+        }
+        .slider{
+            border: 1px solid var(--subtle-shadow);
+            display: flex;
+            justify-self: center;
+            position: relative;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-color);
+            width: fit-content;
+            background-color: var(--toggle-border);
+            font-size: 0.9rem;
+        }
+        .slide{
+            position: absolute;
+            top: 5px;
+            bottom: 5px;
+            left: 5px;
+            width: 95px;
+            background-color: #0078D4;
+            border-radius: 8px;
+            transition: all 0.5s ease;
+            box-shadow: 0 0 7px 1px var(--toggle-background-color);
+        }
+        .move{
+            left: 50%;
+        }
+        .discount{
+            margin: 30px 0 10px 0;
+        }
+        .slider>:first-child{
+            width: 100px;
+            padding: 12px 0;
+        }
+        .slider>:last-child{
+            width: 100px ;
+            padding: 12px 0;
+        }
+        .slider-container{
+            width: 100%;
+            display: flex;
+            place-content: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--subtle-shadow);
+        }
+        .filter{
+            width: calc(100%-50px);
+            display: flex;
+            place-content: end;
+            gap: 10px;
+            padding: 12px 0;
+            padding-right: 50px;
+            border-bottom: 1px solid var(--subtle-shadow);
+            align-items: center;
+        }
+        .filter svg{
+            width: 20px;
+            height: 20px;
+        }
+        .filter select{
+            width: 150px;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-family: inherit;
+            color-scheme: light;
+            color: var(--text-color);
+            background-color: var(--select-color);
+            border: none;
+            outline: none;
+            border: 1px solid var(--subtle-shadow);
+        }
+        .content-section{
+            margin: 0 50px;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        .content-section table{
+            width: 100%;
+            border-collapse: collapse;
+            color: inherit;
+            border-radius: 3px;
+            contain: paint;
+        }
+        .content-section th,.content-section td{
+            text-align: left;
+            padding: 10px 10px;
+        }
+        .content-section thead>tr{
+            background-color: var(--table-row-1);
+        }
+        .content-section tbody>:nth-child(odd){
+            background-color: var(--table-row-odd);
+        }
+        .content-section tbody>:nth-child(even){
+            background-color: var(--table-row-even);
+        }
+        div[menu='selected']{
+            font-size: 1.8rem !important;
+            font-weight: bold;
+        }
+        .profile-avatar{
+            color: var(--text-color);
+            display: flex;
+            place-items: center;
+            gap: 10px;
+        }
+        .profile-avatar>div{
+            border-radius: 50%;
+            contain: paint;
+            width: fit-content;
+            background: linear-gradient(180deg,gray,grey); 
+        }
+        .profile-avatar>div>img{
+            width: 35px;
+            height: 35px;
+            display: block;
+            text-align: center;
+        }
+        .table-container{
+            border: 1px solid var(--subtle-shadow);
+        }
+        .dark-mode-toggle{
+            display: flex;
+            gap: 8px;
+            place-items: center;
+        }
+        .bottom{
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            display: grid;
+            gap: 10px;
+            padding: 10px 0;
+            border-top: 1px solid var(--subtle-shadow);;
+        }
+        .bottom svg{
+            width: 23px;
+            height: 23px;
+        }
+        .logout-div{
+            display: flex;
+            gap: 8px;
+            place-items: center;
+        }
+        .dark-mode-toggle-button span{
+            display: none;
+        }
+        [backgroundmode="light"] span[backgroundmode="light"]{
+            display: unset;
+        }
+        [backgroundmode="dark"] span[backgroundmode="dark"]{
+            display: unset;
+        }
+        .tools{
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .notification{
+            background-color: var(--select-color);
+            padding: 7px;
+            border-radius: 50%;
+            display: grid;
+            border: 1px solid var(--subtle-shadow);
+        }
+        .notification svg{
+            width: 26px;
+            height: 26px;
+        }
+        .search{
+            background-color: var(--select-color);
+            padding: 10px;
+            border-radius: 35px;
+            display: grid;
+            border: 1px solid var(--subtle-shadow);
+            display: flex;
+        }
+        .search input[type="search"]{
+            width: 230px;
+            border: none;
+            outline: 0;
+            padding: 0 7px;
+            font-family: inherit;
+            background-color: transparent;
+            color: var(--text-color);
+            transition: width 0.2s ease ;
+            font-size: 17px;
+        }
+        .search svg{
+            width: 23px;
+            height: 23px;
+        }
+        @media screen and (min-width:700px) {
+            main{
+                height: 100vh;
+                overflow-y: scroll;
+                overflow-x: hidden;
+            }
+        }
+        @keyframes appear {
+            from{
+                opacity: 0.6;
+                scale: 0.6;
+            }
+        }
+        @media screen and (max-width:1000px) {
+            header{
+                font-size: 0.9rem;
+            }
+            .bottom{
+                place-content: center;
+            }
+            .show-panel .bottom{
+                place-content: unset;
+            }
+            .top-text{
+                font-size: 1.3rem;
+            }
+            .side-panel{
+                width: unset;
+                padding: 20px 15px;
+            }
+            .side-panel span{
+                display: none;
+            }
+            .side-panel [type="expandable"]{
+                justify-content: unset;
+                gap: 0;
+                display: grid !important;
+            }
+            .show-panel .top-text{
+                justify-content: space-between;
+            }
+            [type="expanded-list"]{
+                display: none;
+            }
+            .show-panel [type="expanded-list"]{
+                display: unset;
+            }
+            .panel-toggle{
+                rotate: -180deg;
+            }
+            .show-panel .panel-toggle{
+                rotate: 0deg !important;
+            }
+            .show-panel{
+                width: 200px !important;
+                padding: 20px 25px !important;
+            }
+            .show-panel span{
+                display: unset !important;
+            }
+            .show-panel [type="expandable"]{
+                justify-content: space-between !important;
+                display: flex !important;
+            }
+            .slider{
+                font-size: 0.8rem;
+            }
+            .slider>:first-child{
+                padding: 10px 0;
+            }
+            .slider>:last-child{
+                padding: 10px 0;
+            }
+            .content-section th,.content-section td{
+                padding: 7px 7px;
+            }
+            .content-section table{
+                font-size: 0.7rem;
+            }
+            .content-section{
+                margin : 0 20px;
+            }
+            .top-bar{
+                padding-right: 20px;
+            }
+        }
+        @media screen and (max-width:700px) {
+            header{
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: -100%;
+            }
+            .filter{
+                width: 100%;
+                place-content: center;
+                padding-right: 0;
+            }
+        
+            main{
+                width: 100%;
+            }
+            .menu svg{
+                width: 30px;
+                height: 30px;
+            }
+            
+            .dashboard-list2{
+                padding-left: 30px;
+
+            }
+            .list{
+                display: none;
+            }
+            div[menu='selected'] {
+                font-size: 23px !important;
+                font-weight: bold;
+            }
+            .dashboard-list2 li{
+                font-size: 19px !important;
+                transition: all 0.3s ease;
+            }
+            .show-menu{
+                
+            }
+            .show-menu .dashboard-list2>li{
+                transform-origin: left center;
+                animation: appear 0.2s ease;
+                animation-duration: calc(var(--index)*0.1s); 
+            }
+            .show-menu .list{
+                display: unset !important;
+            }
+            [type="menu-selected"]{
+                font-size: 2.2rem !important;
+                font-weight: bolder;
+            }
+            .menu{
+                visibility: visible;
+            }
+            [type="expanded-list"]{
+                display: unset;
+            }
+            .content-section th,.content-section td{
+                white-space: nowrap;
+            }
+            .table-container{
+                max-width: 100%;
+                overflow-x: scroll;
+                border-radius: 3px;
+            }
+            .dashboard-list2 li>div{
+                transition: all 0.3s ease;
+            }
+            .tools{
+                gap: 20px;
+            }
+            .search input[type="search"]{
+                width: 0;
+                height: 0;
+                padding: 0;
+                font-family: inherit;
+                background-color: transparent;
+                color: var(--text-color);
+            }
+            .expand-search{
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%,-50%);
+                z-index: 10000; 
+                outline:1px solid #0078D4;
+                box-shadow: 0 0 10px 1px var(--select-color);
+            }
+            .expand-search input[type="search"]{
+                width: 220px;
+                height: unset;
+                padding: 0;
+                font-family: inherit;
+                background-color: transparent;
+                color: var(--text-color);;
+            }
+        }
+    </style>
+</head>
+<body backgroundmode="light">
+    <header>
+        <nav class="side-panel" mode="open">
+            <div>
+                <div class="top-text"><span>Dashboard</span>
+                    <div class="panel-toggle" onclick="openPanel()">
+                        <svg fill="var(--svg-color)" width="800px" height="800px" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1807.124.056V1920h-112.938V.056h112.938ZM1468.254 0v1919.944H282.407c-93.4 0-169.407-75.895-169.407-169.407V169.407C113 76.007 189.007 0 282.407 0h1185.847ZM830.607 661.138 588.242 903.503h654.137v112.938H588.242l242.365 242.477-79.847 79.847-378.793-378.793 378.793-378.68 79.847 79.846Z" fill-rule="evenodd"/>
+                        </svg>
+                    </div></div>
+                <ul class="dashboard-list">
+                    <li><div title="selected"><svg fill="var(--svg-color)" width="800px" height="800px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                        <title>home</title>
+                        <path d="M0 14.016l2.016 1.984h4v14.016q0 0.832 0.576 
+                        1.408t1.408 0.576h4v-8q0-0.832 0.576-1.408t1.44-0.576h4q0.8 0 1.408 0.576t0.576 1.408v8h4q0.832 0 1.408-0.576t0.608-1.408v-14.016h4l1.984-1.984-16-14.016zM12 14.016q0-1.664 1.184-2.848t2.816-1.152 2.816 1.152 1.184 2.848-1.184 2.816-2.816 1.184-2.816-1.184-1.184-2.816z"></path>
+                        </svg><span>Home</span></div></li>
+                    <li><div><svg fill="var(--svg-color)" width="800px" height="800px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                        <title>home</title>
+                        <path d="M0 14.016l2.016 1.984h4v14.016q0 0.832 0.576 
+                        1.408t1.408 0.576h4v-8q0-0.832 0.576-1.408t1.44-0.576h4q0.8 0 1.408 0.576t0.576 1.408v8h4q0.832 0 1.408-0.576t0.608-1.408v-14.016h4l1.984-1.984-16-14.016zM12 14.016q0-1.664 1.184-2.848t2.816-1.152 2.816 1.152 1.184 2.848-1.184 2.816-2.816 1.184-2.816-1.184-1.184-2.816z"></path>
+                        </svg><span>Profile</span></div></li>
+                    <li><div><svg fill="var(--svg-color)" width="800px" height="800px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                        <title>home</title>
+                        <path d="M0 14.016l2.016 1.984h4v14.016q0 0.832 0.576 
+                        1.408t1.408 0.576h4v-8q0-0.832 0.576-1.408t1.44-0.576h4q0.8 0 1.408 0.576t0.576 1.408v8h4q0.832 0 1.408-0.576t0.608-1.408v-14.016h4l1.984-1.984-16-14.016zM12 14.016q0-1.664 1.184-2.848t2.816-1.152 2.816 1.152 1.184 2.848-1.184 2.816-2.816 1.184-2.816-1.184-1.184-2.816z"></path>
+                        </svg><span>Settings</span></div></li>
+                    <li >
+                        <div type="expandable" mode="closed"><div style="display: flex; gap: 8px; place-items: center;">
+                            <svg fill="var(--svg-color)" width="800px" height="800px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                <title>home</title>
+                                <path d="M0 14.016l2.016 1.984h4v14.016q0 0.832 0.576 
+                                1.408t1.408 0.576h4v-8q0-0.832 0.576-1.408t1.44-0.576h4q0.8 0 1.408 0.576t0.576 1.408v8h4q0.832 0 1.408-0.576t0.608-1.408v-14.016h4l1.984-1.984-16-14.016zM12 14.016q0-1.664 1.184-2.848t2.816-1.152 2.816 1.152 1.184 2.848-1.184 2.816-2.816 1.184-2.816-1.184-1.184-2.816z"></path>
+                                </svg><span>More</span>
+                        </div><svg class="arrow" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5.70711 9.71069C5.31658 10.1012 5.31658 10.7344 5.70711 11.1249L10.5993 16.0123C11.3805 16.7927 12.6463 16.7924 13.4271 16.0117L18.3174 11.1213C18.708 10.7308 18.708 10.0976 18.3174 9.70708C17.9269 9.31655 17.2937 9.31655 16.9032 9.70708L12.7176 13.8927C12.3271 14.2833 11.6939 14.2832 11.3034 13.8927L7.12132 9.71069C6.7308 9.32016 6.09763 9.32016 5.70711 9.71069Z" fill="var(--text-color)"/>
+                            </svg></div>
+                        <ul type="expanded-list" >
+                            <li style="--index:1"><span>Admin</span></li>
+                            <li style="--index:2"><span>You</span></li>
+                            <li style="--index:3"><span>More</span></li>
+                        </ul>
+                    </li>
+                    <li ><div><svg fill="var(--svg-color)" width="800px" height="800px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                        <title>home</title>
+                        <path d="M0 14.016l2.016 1.984h4v14.016q0 0.832 0.576 
+                        1.408t1.408 0.576h4v-8q0-0.832 0.576-1.408t1.44-0.576h4q0.8 0 1.408 0.576t0.576 1.408v8h4q0.832 0 1.408-0.576t0.608-1.408v-14.016h4l1.984-1.984-16-14.016zM12 14.016q0-1.664 1.184-2.848t2.816-1.152 2.816 1.152 1.184 2.848-1.184 2.816-2.816 1.184-2.816-1.184-1.184-2.816z"></path>
+                        </svg><span>Settings</span></div>
+                    <li>
+                </ul>
+            </div>
+            <div class="bottom">
+                <div class="dark-mode-toggle" onclick="toggleLightDark(this)" style="cursor: pointer;">
+                    <div>
+                        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+                            <g clip-path="url(#a)" fill="var(--text-color)">
+                            
+                            <path d="M12 0a1 1 0 0 1 1 1v4a1 1 0 1 1-2 0V1a1 1 0 0 1 1-1ZM4.929 3.515a1 1 0 0 0-1.414 1.414l2.828 2.828a1 1 0 0 0 1.414-1.414L4.93 3.515ZM1 11a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2H1ZM18 12a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2h-4a1 1 0 0 1-1-1ZM17.657 16.243a1 1 0 0 0-1.414 1.414l2.828 2.828a1 1 0 1 0 1.414-1.414l-2.828-2.828ZM7.757 17.657a1 1 0 1 0-1.414-1.414L3.515 19.07a1 1 0 1 0 1.414 1.414l2.828-2.828ZM20.485 4.929a1 1 0 0 0-1.414-1.414l-2.828 2.828a1 1 0 1 0 1.414 1.414l2.828-2.828ZM13 19a1 1 0 1 0-2 0v4a1 1 0 1 0 2 0v-4ZM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/>
+                            
+                            </g>
+                            
+                            <defs>
+                            
+                            <clipPath id="a">
+                            
+                            <path fill="var(--text-color)" d="M0 0h24v24H0z"/>
+                            
+                            </clipPath>
+                            
+                            </defs>
+                        </svg>
+                    </div>
+                    <span>Dark mode</span>
+                </div>
+                <div class="logout-div">
+                    <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H15" stroke="var(--text-color)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M19 12L15 8M19 12L15 16M19 12H9" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div class="nav3" mode="close">
+            <div class="top-bar">
+                <div class="menu" onclick="openMenu()">
+                    <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 7L4 7" stroke="var(--text-color)" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M20 12L4 12" stroke="var(--text-color)" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M20 17L4 17" stroke="var(--text-color)" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="tools">
+                    <div class="search" onclick="expandSearch(this)" id="search-box">
+                        <input type="search" onblur="collapseSearch()">
+                        <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none">
+                            <path d="M17 17L21 21" stroke="var(--text-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="var(--text-color)" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="notification">
+                        <svg fill="var(--text-color)" width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10,20h4a2,2,0,0,1-4,0Zm8-4V10a6,6,0,0,0-5-5.91V3a1,1,0,0,0-2,0V4.09A6,6,0,0,0,6,10v6L4,18H20Z"/>
+                        </svg>
+                    </div>
+                    <div class="profile-avatar">
+                        <div><img src="abigail.png" alt=""></div>
+                    </div>
+                </div>  
+            </div>
+            <div class="list">
+                <ul class="dashboard-list2">
+                    <li style="--index:1"><div menu="selected">Home</div></li>
+                    <li style="--index:2"><div>Profile</div></li>
+                    <li style="--index:3"><div>Settings</div></li>
+                    <li style="--index:4">
+                        <div type="expandable" mode="closed"><div style="display: flex; gap: 8px; place-items: center;"><span>More</span>
+                        </div><svg class="arrow" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5.70711 9.71069C5.31658 10.1012 5.31658 10.7344 5.70711 11.1249L10.5993 16.0123C11.3805 16.7927 12.6463 16.7924 13.4271 16.0117L18.3174 11.1213C18.708 10.7308 18.708 10.0976 18.3174 9.70708C17.9269 9.31655 17.2937 9.31655 16.9032 9.70708L12.7176 13.8927C12.3271 14.2833 11.6939 14.2832 11.3034 13.8927L7.12132 9.71069C6.7308 9.32016 6.09763 9.32016 5.70711 9.71069Z" fill="var(--text-color)"/>
+                            </svg></div>
+                        <ul type="expanded-list" >
+                            <li style="--index:1"><span>Admin</span></li>
+                            <li style="--index:2"><span>You</span></li>
+                            <li style="--index:3"><span>More</span></li>
+                        </ul>
+                    </li>
+                    <li style="--index:5"><div>Settings</span></div>
+                    </li>
+                    <li onclick="toggleLightDark(this)" class="dark-mode-toggle-button" style="cursor: pointer;"><div><span backgroundmode="light">Dark Mode</span><span backgroundmode="dark">Light Mode</span></div></li>
+                    <li><div>Logout</div></li>
+                </ul>
+            </div>
+        </div>
+        <div class="filter">
+            <svg fill="var(--text-color)" width="800px" height="800px" viewBox="0 0 24 24" ><path d="M11,4.5a1,1,0,0,1,1-1h9a1,1,0,0,1,0,2H12A1,1,0,0,1,11,
+                4.5Zm1,6h9a1,1,0,0,0,0-2H12a1,1,0,0,0,0,2Zm0,5h9a1,1,0,0,0,0-2H12a1,1,0,0,0,0,2Zm0,5h9a1,1,0,0,0,0-2H12a1,1,0,0,0,0,2ZM6,2A1,1,0,0
+                ,0,5,3V18.586L3.707,17.293a1,1,0,0,0-1.414,1.414l3,3a1,1,0,0,0,1.416,0l3-3a1,1,0,0,0-1.414-1.414L7,18.586V3A1,1,0,0,0,6,2Z"/>
+            </svg>
+            <select>
+                <option disabled selected>working day</option>
+            </select>
+            <select>
+                <option disabled selected>working day</option>
+            </select>
+        </div>
+        <div class="slider-container">
+            <div class="slider">
+                <div id="monthly" style="  text-align: center; z-index: 100; background-color: transparent;" onclick="selectTableContent(event)">Table</div>
+                <div class="slide"></div>
+                <div id="yearly" style=" text-align: center;z-index: 100; background-color: transparent;" onclick="selectGraphContent(event)">Graph</div>
+            </div>
+        </div>
+       <section id="body">
+        <!-- where are all the content goes-->
+        <section id="table" class="content-section">
+            <div>
+                <p>Attendance on Day of Service</p>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Service Title</th>
+                                <th>Preacher</th>
+                                <th>Member</th>
+                                <th>Total Attendance</th>
+                                <th>Not</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>12</td>
+                                <td>THY WORKS</td>
+                                <td>PS. CALEB NTUMI</td>
+                                <td>112</td>
+                                <td>1</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td>THY WORKS</td>
+                                <td>PS. CALEB NTUMI</td>
+                                <td>112</td>
+                                <td>1</td>
+                                <td>0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <p>Attendance on Day of Service</p>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Service Title</th>
+                                <th>Total Attendance</th>
+                                <th>Not</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>12</td>
+                                <td>THY WORKS</td>
+                                <td>1</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td>THY WORKS</td>
+                                <td>1</td>
+                                <td>0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <section id="graph" class="content-section" style="display: none;">
+            
+        </section>
+       </section>
+    </main>
+    <script>
+        //start of responsiveness
+        loadTheme()
+        
+        const monthly = document.querySelectorAll('.monthly')
+        const yearly = document.querySelectorAll('.yearly')
+        function selectTableContent(e){
+            document.querySelector('.slide').classList.remove('move')
+            const tableContainer = document.querySelector('#table')
+            tableContainer.style.display = 'flex'
+            const graphContainer = document.querySelector('#graph')
+            graphContainer.style.display = 'none'
+        }
+        function selectGraphContent(e){
+            document.querySelector('.slide').classList.add('move')
+            const graphContainer = document.querySelector('#graph')
+            graphContainer.style.display = 'flex'
+            const tableContainer = document.querySelector('#table')
+            tableContainer.style.display = 'none'
+        }        
+        const expandableList = document.querySelectorAll('div[type="expandable"]')
+        const MenuList = document.querySelectorAll('.dashboard-list2>li>div')
+        MenuList.forEach(el=>{
+            console.log(el)
+            el.addEventListener('click',()=>{
+                MenuList.forEach(value=>{
+                    value.setAttribute('menu','')
+                })
+                el.setAttribute('menu','selected')
+
+            })
+        })
+        expandableList.forEach((expandable)=>{
+            expandable.addEventListener('click',()=>{
+                const svg = expandable.querySelector('.arrow')
+                const expandableItemListContainer = expandable.nextElementSibling
+                if(expandable.getAttribute('mode')==='closed'){
+                    expandable.setAttribute('mode','opened')
+                    expandableItemListContainer.classList.add('expand')
+                    svg.classList.add('rotate-arrow')
+                }else{
+                    expandable.setAttribute('mode','closed')
+                    expandableItemListContainer.classList.remove('expand')
+                    svg.classList.remove('rotate-arrow')
+                }
+                const sidePanel = document.querySelector('.side-panel')
+                if(window.matchMedia("screen and (max-width:1000px)").matches){
+                    sidePanel.classList.add('show-panel')
+                }else{
+                    sidePanel.classList.remove('show-panel')
+                }
+
+                })
+        })
+        function openPanel(){
+            const sidePanel = document.querySelector('.side-panel')
+            if(sidePanel.classList.contains('show-panel')){
+                sidePanel.classList.remove('show-panel')
+            }else{
+                sidePanel.classList.add('show-panel')
+            }
+        }
+        function openMenu(){
+            const menuListContainer = document.querySelector('.nav3')
+            if(menuListContainer.getAttribute('mode')=='close'){
+                menuListContainer.classList.add('show-menu')
+                menuListContainer.setAttribute('mode','open')
+            }else{
+                menuListContainer.classList.remove('show-menu')
+                menuListContainer.setAttribute('mode','close')
+            }
+        }
+        function resetMenu(){
+            const menuList = document.querySelectorAll('.dashboardlist2>li>div')
+            menuList.forEach((el)=>{
+                el.setAttribute('type','')
+            })
+        }
+        function resetDashboardLinks(){
+           const sidePanelList = document.querySelectorAll('..side-panel li>div')
+           sidePanelList.forEach((el)=>{
+               el.setAttribute('type','')
+           }) 
+        }
+        const navs = document.querySelectorAll('.side-panel li>div')
+        navs.forEach((nav)=>{
+            nav.addEventListener('click',(e)=>{
+                navs.forEach(function(el){
+                    el.setAttribute('title','')
+                })
+                nav.setAttribute('title','selected')
+            })
+        })
+        function loadTheme(){
+            const theme = localStorage.getItem('backgroundmode')
+            if(theme==='light'){
+                document.body.setAttribute("backgroundmode","light");
+            }else{
+                document.body.setAttribute("backgroundmode","dark")
+            }
+        }
+        function toggleLightDark(el){
+            if(document.body.getAttribute("backgroundmode")==='light'){
+                document.body.setAttribute("backgroundmode","dark");
+                localStorage.setItem('backgroundmode','dark')
+                el.querySelector('span').textContent = 'Light mode'
+            }else{
+                document.body.setAttribute("backgroundmode","light")
+                el.querySelector('span').textContent = 'Dark mode'
+                localStorage.setItem('backgroundmode','light')
+            }
+        }
+        function expandSearch(el){
+            el.classList.add('expand-search');
+            const searchTag = el.querySelector('input[type="search"]')
+            searchTag.focus();
+        }
+        function collapseSearch(){
+            const searchDiv = document.querySelector('#search-box');
+            searchDiv.classList.remove('expand-search');
+        }
+        //end of responsiveness 
+    </script>
+</body>
+</html>
