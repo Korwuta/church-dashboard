@@ -315,12 +315,12 @@
             width: 100%;
             border-collapse: collapse;
             color: inherit;
-            border-radius: 3px;
             contain: paint;
         }
         .content-section th,.content-section td{
             text-align: left;
             padding: 10px 10px;
+            border: 1px solid var(--subtle-shadow);
         }
         .content-section thead>tr{
             background-color: var(--table-row-1);
@@ -431,7 +431,7 @@
             border-bottom: 1px solid var(--subtle-shadow);
         }
         .table-container>table{
-            border-bottom: 1px solid var(--subtle-shadow);
+            border-bottom: 2px solid var(--subtle-shadow);
         }
         @media screen and (min-width:700px) {
             main{
@@ -580,9 +580,10 @@
             }
             .content-section th,.content-section td{
                 white-space: nowrap;
-                font-size: 1rem;
-                padding-left: 13px;
-                padding-right: 13px;
+                font-size: 0.9rem;
+                padding-left: 15px;
+                padding-right: 15px;
+                
             }
             .table-container{
                 max-width: 100%;
