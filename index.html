@@ -310,7 +310,6 @@
             color: var(--text-color);
             display: flex;
             flex-direction: column;
-            gap: 40px;
         }
         .content-section table{
             width: 100%;
@@ -426,6 +425,13 @@
         .search svg{
             width: 23px;
             height: 23px;
+        }
+        .table-div{
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--subtle-shadow);
+        }
+        .table-container>table{
+            border-bottom: 1px solid var(--subtle-shadow);
         }
         @media screen and (min-width:700px) {
             main{
@@ -574,6 +580,9 @@
             }
             .content-section th,.content-section td{
                 white-space: nowrap;
+                font-size: 1rem;
+                padding-left: 13px;
+                padding-right: 13px;
             }
             .table-container{
                 max-width: 100%;
@@ -768,8 +777,8 @@
        <section id="body">
         <!-- where are all the content goes-->
         <section id="table" class="content-section">
-            <div>
-                <p>Attendance on Day of Service</p>
+            <div class="table-div">
+                <h1>Attendance on Day of Service</h1>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -803,8 +812,8 @@
                     </table>
                 </div>
             </div>
-            <div>
-                <p>Attendance on Day of Service</p>
+            <div class="table-div">
+                <h1>Attendance on Day of Service</h1>
                 <div class="table-container">
                     <table>
                         <thead>
